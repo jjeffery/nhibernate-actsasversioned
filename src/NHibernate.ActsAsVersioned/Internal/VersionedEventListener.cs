@@ -6,12 +6,16 @@ using NHibernate.Type;
 
 namespace NHibernate.ActsAsVersioned.Internal
 {
+    /// <summary>
+    /// Listener for NHibernate events.
+    /// </summary>
     public class VersionedEventListener : IPostInsertEventListener, IPostUpdateEventListener, IPostDeleteEventListener
     {
         // versioned classes, keyed by the entity name of the tracked class
         private readonly IDictionary<string, VersionedClass> _versionedClasses = new Dictionary<string, VersionedClass>();
 
-        private readonly VersionedTransactionManager _transactions = new VersionedTransactionManager();
+        // maintains a transaction processor for each transaction in progress
+        private readonly VersionedTransactionManager _transactionManager = new VersionedTransactionManager();
 
         public VersionedEventListener(IEnumerable<VersionedClass> versionedClasses)
         {
@@ -63,7 +67,7 @@ namespace NHibernate.ActsAsVersioned.Internal
                 data[property.Name] = null;
             }
 
-            var processor = _transactions.Get(@event.Session);
+            var processor = _transactionManager.Get(@event.Session);
             processor.Add(vc.VersionedEntityName, @event.Id, data);
         }
 
@@ -102,7 +106,7 @@ namespace NHibernate.ActsAsVersioned.Internal
                 }
             }
 
-            var processor = _transactions.Get(@event.Session);
+            var processor = _transactionManager.Get(@event.Session);
             processor.Add(vc.VersionedEntityName, @event.Id, data);
         }
     }

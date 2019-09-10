@@ -8,11 +8,22 @@ using NHibernate.Event;
 
 namespace NHibernate.ActsAsVersioned.Internal
 {
+    /// <summary>
+    /// Manages all versioned transaction processors.
+    /// </summary>
+    /// <remarks>
+    /// There is one versioned transaction processor for each transaction in progress that modifies
+    /// a versioned entity.
+    /// </remarks>
     public class VersionedTransactionManager
     {
         private ConcurrentDictionary<ITransaction, VersionedTransactionProcessor> _processors =
             new ConcurrentDictionary<ITransaction, VersionedTransactionProcessor>();
 
+        /// <summary>
+        /// Gets the versioned transaction processor associated with the transaction.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If the session does not have a transaction.</exception>
         public VersionedTransactionProcessor Get(IEventSource session)
         {
             var transaction = session.Transaction;
@@ -24,6 +35,10 @@ namespace NHibernate.ActsAsVersioned.Internal
             return _processors.GetOrAdd(transaction, tx =>
             {
                 var vp = new VersionedTransactionProcessor(session);
+
+                // Register with the session so that the versioned transaction processor is invoked
+                // just prior to the transaction commit, and that it is cleaned up after the transaction
+                // has completed.
                 var transactionCompletionProcess = new TransactionCompletionProcess(_processors, tx);
                 session.ActionQueue.RegisterProcess((IBeforeTransactionCompletionProcess) transactionCompletionProcess);
                 session.ActionQueue.RegisterProcess((IAfterTransactionCompletionProcess)transactionCompletionProcess);
@@ -53,7 +68,11 @@ namespace NHibernate.ActsAsVersioned.Internal
 
             public Task ExecuteBeforeTransactionCompletionAsync(CancellationToken cancellationToken)
             {
-                ExecuteBeforeTransactionCompletion();
+                if (_processors.TryGetValue(_transaction, out var processor))
+                {
+                    return processor.DoBeforeTransactionCompletionAsync(cancellationToken);
+                }
+
                 return Task.CompletedTask;
             }
 
