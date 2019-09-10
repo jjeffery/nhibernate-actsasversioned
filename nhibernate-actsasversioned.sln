@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.ActsAsVersioned"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernate.ActsAsVersioned.Tests", "src\NHibernate.ActsAsVersioned.Tests\NHibernate.ActsAsVersioned.Tests.csproj", "{FBDB2323-AE3E-454A-AAD9-4DF867697D71}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nhibernate-acts-as-versioned", "nhibernate-acts-as-versioned", "{037F0386-73E2-45D3-9A0A-CFCDCD53B1B3}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
