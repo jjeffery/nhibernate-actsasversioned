@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NHibernate.ActsAsVersioned.Attributes
+namespace NHibernate.ActsAsVersioned
 {
     /// <summary>
     /// Attribute that indicates that an entity class has its version

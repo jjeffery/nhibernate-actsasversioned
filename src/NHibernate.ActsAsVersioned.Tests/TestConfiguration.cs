@@ -3,12 +3,15 @@ using System.Data.SQLite;
 using System.IO;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 
 namespace NHibernate.ActsAsVersioned
 {
     public static class TestConfiguration
     {
+        public static string DataSource = ":memory:";
+
         private static readonly Lazy<Cfg.Configuration> LazyConfiguration =
             new Lazy<Cfg.Configuration>(BuildNHibernateConfiguration);
 
@@ -33,15 +36,22 @@ namespace NHibernate.ActsAsVersioned
         public static NHibernate.Cfg.Configuration BuildNHibernateConfiguration()
         {
             var fluentConfig = BuildFluentConfiguration();
-            return fluentConfig.BuildConfiguration();
+            var nhConfig = fluentConfig.BuildConfiguration();
+            return nhConfig.IntegrateWithActsAsVersioned();
         }
 
         public static string BuildConnectionString()
         {
             var cs = new SQLiteConnectionStringBuilder
             {
-                DataSource = ":memory:"
+                DataSource = DataSource
             };
+
+            if (DataSource != ":memory:")
+            {
+                File.Delete(DataSource);
+            }
+
             return cs.ToString();
         }
 

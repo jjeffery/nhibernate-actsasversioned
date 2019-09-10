@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NHibernate.Cfg;
+﻿using NHibernate.Cfg;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace NHibernate.ActsAsVersioned.Configuration
+namespace NHibernate.ActsAsVersioned
 {
     public class NHConfigurationExtensionsTests
     {

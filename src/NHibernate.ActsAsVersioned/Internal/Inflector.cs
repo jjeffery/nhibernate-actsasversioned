@@ -1,8 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
-namespace NHibernate.ActsAsVersioned.Configuration
+namespace NHibernate.ActsAsVersioned.Internal
 {
+    /// <summary>
+    /// Performs string manipulation for upper/lower case.
+    /// </summary>
     public static class Inflector
     {
         public static string ToSnakeCase([NotNull] string s)
