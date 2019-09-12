@@ -27,37 +27,50 @@ namespace NHibernate.ActsAsVersioned.Internal
     {
         private readonly ISession _session;
 
-        private readonly ConcurrentDictionary<Tuple<string, object>, IDictionary<string, object>> _versionedObjects =
-            new ConcurrentDictionary<Tuple<string, object>, IDictionary<string, object>>();
+        private readonly ConcurrentDictionary<Tuple<string, object>, WorkUnit> _workUnits =
+            new ConcurrentDictionary<Tuple<string, object>, WorkUnit>();
 
         public VersionedTransactionProcessor(ISession session)
         {
             _session = session;
         }
 
-        public void Add(string entityName, object id, IDictionary<string, object> data)
+        public void Add(WorkUnit workUnit)
         {
-            var key = new Tuple<string, object>(entityName, id);
-            _versionedObjects.AddOrUpdate(key, data, (existingKey, existingData) => data);
+            WorkUnit AddValue(Tuple<string, object> key) => workUnit;
+            WorkUnit UpdateValue(Tuple<string, object> key, WorkUnit previousWorkUnit) => previousWorkUnit.Merge(workUnit);
+
+            _workUnits.AddOrUpdate(workUnit.Key, AddValue, UpdateValue);
         }
 
         public void DoBeforeTransactionCompletion()
         {
-            foreach (var kv in _versionedObjects)
+            foreach (var kv in _workUnits)
             {
                 var entityName = kv.Key.Item1;
-                var data = kv.Value;
-                _session.Save(entityName, data);
+                var workUnit = kv.Value;
+                var data = workUnit.GetData();
+
+                // if data is null then nothing has changed (or at least none of the
+                // properties that are being versioned have changed)
+                if (data != null)
+                {
+                    _session.Save(entityName, data);
+                }
             }
         }
 
         public async Task DoBeforeTransactionCompletionAsync(CancellationToken cancellationToken)
         {
-            foreach (var kv in _versionedObjects)
+            foreach (var kv in _workUnits)
             {
                 var entityName = kv.Key.Item1;
-                var data = kv.Value;
-                await _session.SaveAsync(entityName, data, cancellationToken);
+                var workUnit = kv.Value;
+                var data = workUnit.GetData();
+                if (data != null)
+                {
+                    await _session.SaveAsync(entityName, data, cancellationToken);
+                }
             }
         }
     }

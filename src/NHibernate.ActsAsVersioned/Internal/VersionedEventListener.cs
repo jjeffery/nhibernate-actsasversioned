@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using NHibernate.Event;
-using NHibernate.Type;
 
 namespace NHibernate.ActsAsVersioned.Internal
 {
@@ -33,7 +32,13 @@ namespace NHibernate.ActsAsVersioned.Internal
 
         public void OnPostInsert(PostInsertEvent @event)
         {
-            CommonInsertUpdate(@event);
+            var vc = GetVersionedClass(@event);
+            if (vc == null)
+            {
+                return;
+            }
+            var processor = _transactionManager.Get(@event.Session);
+            processor.Add(new InsertWorkUnit(@event, vc));
         }
 
         public Task OnPostUpdateAsync(PostUpdateEvent @event, CancellationToken cancellationToken)
@@ -44,7 +49,13 @@ namespace NHibernate.ActsAsVersioned.Internal
 
         public void OnPostUpdate(PostUpdateEvent @event)
         {
-            CommonInsertUpdate(@event);
+            var vc = GetVersionedClass(@event);
+            if (vc == null)
+            {
+                return;
+            }
+            var processor = _transactionManager.Get(@event.Session);
+            processor.Add(new UpdateWorkUnit(@event, vc));
         }
 
         public Task OnPostDeleteAsync(PostDeleteEvent @event, CancellationToken cancellationToken)
@@ -60,15 +71,8 @@ namespace NHibernate.ActsAsVersioned.Internal
             {
                 return;
             }
-
-            var data = new Dictionary<string, object> { [vc.RefIdPropertyName] = @event.Id };
-            foreach (var property in vc.Properties)
-            {
-                data[property.Name] = null;
-            }
-
             var processor = _transactionManager.Get(@event.Session);
-            processor.Add(vc.VersionedEntityName, @event.Id, data);
+            processor.Add(new DeleteWorkUnit(@event, vc));
         }
 
         private VersionedClass GetVersionedClass(AbstractPostDatabaseOperationEvent @event)
@@ -79,35 +83,6 @@ namespace NHibernate.ActsAsVersioned.Internal
             }
 
             return null;
-        }
-
-        public void CommonInsertUpdate(AbstractPostDatabaseOperationEvent @event)
-        {
-            var vc = GetVersionedClass(@event);
-            if (vc == null)
-            {
-                return;
-            }
-
-            var data = new Dictionary<string, object> { [vc.RefIdPropertyName] = @event.Id };
-            foreach (var property in vc.Properties)
-            {
-                var value = @event.Persister.GetPropertyValue(@event.Entity, property.Name);
-                if (property.Type is EntityType entityType)
-                {
-                    var entityName = entityType.GetAssociatedEntityName();
-                    var persister = @event.Session.GetEntityPersister(entityName, value);
-                    var id = persister.GetIdentifier(value);
-                    data[property.Name] = id;
-                }
-                else
-                {
-                    data[property.Name] = value;
-                }
-            }
-
-            var processor = _transactionManager.Get(@event.Session);
-            processor.Add(vc.VersionedEntityName, @event.Id, data);
         }
     }
 }

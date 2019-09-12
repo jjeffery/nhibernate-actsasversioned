@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using NHibernate.Cfg;
 using NHibernate.Engine;
@@ -70,12 +71,26 @@ namespace NHibernate.ActsAsVersioned.Internal
             VersionedEntityName = pc.MappedClass + "_Version";
             RefIdPropertyName = pc.MappedClass.Name + pc.IdentifierProperty.Name;
 
-            // TODO: could have properties marked as non-versioned and eliminate them here
+            var notMapped = new HashSet<string>();
+            foreach (var property in pc.MappedClass.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                var notVersionedAttribute = Attribute.GetCustomAttribute(property, typeof(NotVersionedAttribute));
+                if (notVersionedAttribute != null)
+                {
+                    notMapped.Add(property.Name);
+                }
+            }
+
             foreach (var property in pc.PropertyIterator)
             {
                 if (property.Type.IsCollectionType)
                 {
                     // not interested in collection types
+                    continue;
+                }
+
+                if (notMapped.Contains(property.Name))
+                {
                     continue;
                 }
 
