@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NHibernate.ActsAsVersioned.Models
+﻿namespace NHibernate.ActsAsVersioned.Models
 {
     public abstract class Entity<TId>
     {

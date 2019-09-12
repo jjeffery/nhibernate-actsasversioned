@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NHibernate.ActsAsVersioned.Models
+﻿namespace NHibernate.ActsAsVersioned.Models
 {
     [ActsAsVersioned("book_versions")]
     public class Book : Entity<int>
