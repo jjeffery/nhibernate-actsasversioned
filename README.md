@@ -18,13 +18,13 @@ This description assumes that the reader is familiar with setting up NHibernate.
 object is created.
 
 ```C#
-    // Create configuration using XML mappings, mapping by code, Fluent NHibernate, etc
+	// Create configuration using XML mappings, mapping by code, Fluent NHibernate, etc
 	Configuration cfg = BuildConfigurationSomehow();
 
 	// Enable ActsAsVersioned
 	cfg.IntegrateWithActsAsVersioned();
 
-	// ready to build a session factory
+	// Now ready to build a session factory
 	var sessionFactory = cfg.BuildSessionFactory();
 ```
 
