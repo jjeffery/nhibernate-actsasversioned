@@ -67,7 +67,7 @@ namespace NHibernate.ActsAsVersioned.Internal
             }
 
             TrackedPersistentClass = pc;
-            TableName = attribute.TableName;
+            TableName = attribute.TableName ?? Inflector.ToSnakeCase(pc.MappedClass.Name) + "_versions";
             VersionedEntityName = pc.MappedClass + "_Version";
             RefIdPropertyName = pc.MappedClass.Name + pc.IdentifierProperty.Name;
 

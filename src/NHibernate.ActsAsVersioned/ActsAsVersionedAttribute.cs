@@ -14,9 +14,15 @@ namespace NHibernate.ActsAsVersioned
         /// </summary>
         public readonly string TableName;
 
-        public ActsAsVersionedAttribute(string tableName)
+        /// <summary>
+        /// Name of the reference column for the versioned entity
+        /// primary key.
+        /// </summary>
+        public string ColumnName { get; set; }
+
+        public ActsAsVersionedAttribute(string tableName = null)
         {
-            TableName = tableName ?? throw new ArgumentNullException(nameof(tableName));
+            TableName = tableName;
         }
     }
 }
