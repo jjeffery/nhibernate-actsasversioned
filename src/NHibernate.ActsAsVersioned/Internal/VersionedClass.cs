@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using NHibernate.Cfg;
 using NHibernate.Engine;
 using NHibernate.Mapping;
 using NHibernate.Type;
+using Configuration = NHibernate.Cfg.Configuration;
 
 namespace NHibernate.ActsAsVersioned.Internal
 {
@@ -17,6 +17,9 @@ namespace NHibernate.ActsAsVersioned.Internal
 
         // Table name for the versioned table
         public readonly string TableName;
+
+        // Column name for the primary key of the versioned class
+        public readonly string ColumnName;
 
         // NHibernate entity name for the versioned class
         public readonly string VersionedEntityName;
@@ -68,6 +71,7 @@ namespace NHibernate.ActsAsVersioned.Internal
 
             TrackedPersistentClass = pc;
             TableName = attribute.TableName ?? Inflector.ToSnakeCase(pc.MappedClass.Name) + "_versions";
+            ColumnName = attribute.ColumnName ?? Inflector.ToSnakeCase(pc.MappedClass.Name) + "_id";
             VersionedEntityName = pc.MappedClass + "_Version";
             RefIdPropertyName = pc.MappedClass.Name + pc.IdentifierProperty.Name;
 
@@ -128,7 +132,7 @@ namespace NHibernate.ActsAsVersioned.Internal
 
             var refIdProperty = classElement.CreateProperty(RefIdPropertyName);
             refIdProperty.Add(
-                new XAttribute("column", Inflector.ToSnakeCase(RefIdPropertyName)),
+                new XAttribute("column", ColumnName),
                 new XAttribute("not-null", true),
                 new XAttribute("type", TrackedPersistentClass.IdentifierProperty.Type.Name));
 
