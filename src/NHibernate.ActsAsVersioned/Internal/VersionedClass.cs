@@ -182,21 +182,30 @@ namespace NHibernate.ActsAsVersioned.Internal
             if (property.Type is EntityType entityType)
             {
                 var idType = entityType.GetIdentifierOrUniqueKeyType(mapping);
-                propertyElement.Add(new XAttribute("type", idType.Name));
-                /*
-                var sqlType = entityType.SqlTypes(Mapping).FirstOrDefault();
-                if (sqlType != null)
-                {
-                    propertyElem.Add(new XAttribute("type", sqlType));
-                }
-                */
+                AddTypeAttribute(propertyElement, idType);
             }
             else
             {
-                propertyElement.Add(new XAttribute("type", property.Type.Name));
+                AddTypeAttribute(propertyElement, property.Type);
             }
 
             propertyElement.Add(new XAttribute("not-null", false));
+        }
+
+        private static void AddTypeAttribute(XElement propertyElement, IType type)
+        {
+            if (type is CustomType customType)
+            {
+                propertyElement.Add(new XAttribute("type", customType.UserType.GetType().AssemblyQualifiedName));
+            }
+            else if (NHibernate.Type.TypeFactory.HeuristicType(type.Name) == null)
+            {
+                propertyElement.Add(new XAttribute("type", type.GetType().AssemblyQualifiedName));
+            }
+            else
+            {
+                propertyElement.Add(new XAttribute("type", type.Name));
+            }
         }
     }
 }
