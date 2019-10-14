@@ -83,7 +83,7 @@ namespace NHibernate.ActsAsVersioned.Internal
             var value = state[index];
 
             // For entities, return the entity id.
-            if (property.Type is EntityType entityType)
+            if (value != null && property.Type is EntityType entityType)
             {
                 var entityName = entityType.GetAssociatedEntityName();
                 var persister = Session.GetEntityPersister(entityName, value);
