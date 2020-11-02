@@ -7,5 +7,7 @@
         public virtual string Title { get; set; }
         public virtual bool Published { get; set; }
         public virtual bool Fiction { get; set; }
+        [NotVersioned]
+        public virtual int NotVersioned { get; set; }
     }
 }

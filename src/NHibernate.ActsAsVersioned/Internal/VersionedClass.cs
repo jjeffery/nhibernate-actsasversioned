@@ -138,7 +138,10 @@ namespace NHibernate.ActsAsVersioned.Internal
 
             foreach (var property in TrackedPersistentClass.PropertyIterator)
             {
-                AddProperty(classElement, property, mapping);
+                if (Properties.Any(p => p.Name == property.Name))
+                {
+                    AddProperty(classElement, property, mapping);
+                }
             }
 
             var rootElement = new XElement(HbmXml.ElementName("hibernate-mapping"),

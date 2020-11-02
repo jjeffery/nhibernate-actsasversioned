@@ -20,6 +20,9 @@ namespace NHibernate.ActsAsVersioned.Mappings
             Map(x => x.Fiction)
                 .CustomType<CustomSimpleType>()
                 .Not.Nullable();
+            Map(x => x.NotVersioned)
+                .Column("not_versioned")
+                .Not.Nullable();
             References(x => x.Author)
                 .Column("author_id")
                 .Not.Nullable();
