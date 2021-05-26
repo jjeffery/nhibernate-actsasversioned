@@ -26,7 +26,7 @@ namespace NHibernate.ActsAsVersioned.Internal
         /// <exception cref="InvalidOperationException">If the session does not have a transaction.</exception>
         public VersionedTransactionProcessor Get(IEventSource session)
         {
-            var transaction = session.Transaction;
+            var transaction = session.GetCurrentTransaction();
             if (transaction == null)
             {
                 throw new InvalidOperationException("acts as versioned: transaction is required");
