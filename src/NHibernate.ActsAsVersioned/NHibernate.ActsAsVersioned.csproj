@@ -2,32 +2,41 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.1.7</Version>
+    <Version>0.2.4</Version>
     <Authors>John Jeffery</Authors>
     <Company>Software Projects Pty Ltd</Company>
-    <Description>Simple audit logging compatible with the Ruby "acts_as_versioned" gem for ActiveRecord.</Description>
-    <PackageLicenseExpression></PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/jjeffery/nhibernate-actsasversioned</RepositoryUrl>
-    <AssemblyVersion>0.1.7.0</AssemblyVersion>
-    <FileVersion>0.1.7.0</FileVersion>
+    <Product>NHibernate.ActsAsVersioned</Product>
+    <Title>NHibernate.ActsAsVersioned</Title>
+    <Description>Audit logging compatible with the Ruby "acts_as_versioned" gem for ActiveRecord.</Description>
+    <AssemblyVersion>0.2.4.0</AssemblyVersion>
+    <FileVersion>0.2.4.0</FileVersion>
+    <PackageId>NHibernate.ActsAsVersioned</PackageId>
+    <PackageTags>nhibernate</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Upgrade NHibernate to v5.3.8</PackageReleaseNotes>
+    <PackageReleaseNotes>Improve handling of custom types</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/jjeffery/nhibernate-actsasversioned.git</RepositoryUrl>
+    <PackageProjectUrl>https://github/jjeffery/nhibernate-actsasversioned</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NHibernate" Version="5.3.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="JetBrains.Annotations">
-      <HintPath>C:\Users\jjeffery\.nuget\packages\jetbrains.annotations\2019.1.3\lib\netstandard2.0\JetBrains.Annotations.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0-beta-20204-02" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE.txt">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
