@@ -197,18 +197,43 @@ namespace NHibernate.ActsAsVersioned.Internal
 
         private static void AddTypeAttribute(XElement propertyElement, IType type)
         {
-            if (type is CustomType customType)
+            string typeName;
+
+            // User types are wrapped in an adapter class (either CustomType or CompositeCustomType).
+            // These adapter classes convert the user type to a class that implements the IType interface.
+            // It's not useful to map the property to the custom class wrapper, so look for these adapter
+            // classes and extract the user type class.
+            if (type is CompositeCustomType compositeCustomType)
             {
-                propertyElement.Add(new XAttribute("type", customType.UserType.GetType().AssemblyQualifiedName));
+                typeName = compositeCustomType.UserType.GetType().AssemblyQualifiedName;
             }
-            else if (NHibernate.Type.TypeFactory.HeuristicType(type.Name) == null)
+            else if (type is CustomType customType)
             {
-                propertyElement.Add(new XAttribute("type", type.GetType().AssemblyQualifiedName));
+                typeName = customType.UserType.GetType().AssemblyQualifiedName;
+            }
+            else if (IsNHibernateType(type))
+            {
+                // Use the type name for NHibernate builtin types. The type name can contain additional
+                // information, such as the length, scale and precision.
+                typeName = type.Name;
             }
             else
             {
-                propertyElement.Add(new XAttribute("type", type.Name));
+                // Not a registered type so use the type's fully qualified name. Note that this might not work correctly
+                // for custom types that include additional parameters such as length, scale or precision.
+                typeName = type.GetType().AssemblyQualifiedName;
             }
+
+            if (typeName != null)
+            {
+                propertyElement.Add(new XAttribute("type", typeName));
+            }
+        }
+
+        private static bool IsNHibernateType(IType type)
+        {
+            var assemblyName = type.GetType().Assembly.GetName().Name;
+            return assemblyName.Equals("NHibernate", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
