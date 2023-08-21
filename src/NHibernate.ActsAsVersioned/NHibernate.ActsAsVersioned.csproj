@@ -2,19 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.2.4</Version>
+    <Version>0.3.0</Version>
     <Authors>John Jeffery</Authors>
     <Company>Software Projects Pty Ltd</Company>
     <Product>NHibernate.ActsAsVersioned</Product>
     <Title>NHibernate.ActsAsVersioned</Title>
     <Description>Audit logging compatible with the Ruby "acts_as_versioned" gem for ActiveRecord.</Description>
-    <AssemblyVersion>0.2.4.0</AssemblyVersion>
-    <FileVersion>0.2.4.0</FileVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
     <PackageId>NHibernate.ActsAsVersioned</PackageId>
     <PackageTags>nhibernate</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Improve handling of custom types</PackageReleaseNotes>
+    <PackageReleaseNotes>Add AutoUpdate attribute</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/jjeffery/nhibernate-actsasversioned.git</RepositoryUrl>
     <PackageProjectUrl>https://github/jjeffery/nhibernate-actsasversioned</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
