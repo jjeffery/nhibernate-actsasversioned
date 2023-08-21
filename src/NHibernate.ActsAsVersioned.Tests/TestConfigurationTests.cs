@@ -37,7 +37,7 @@ namespace NHibernate.ActsAsVersioned
                         .WhereRestrictionOn(a => a.Name).IsLike("%2")
                         .List();
 
-                    Assert.Equal(1, list2.Count);
+                    Assert.Single(list2);
 
                     tx.Rollback();
                 }
