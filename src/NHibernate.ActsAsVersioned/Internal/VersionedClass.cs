@@ -31,6 +31,7 @@ namespace NHibernate.ActsAsVersioned.Internal
         public PersistentClass VersionedPersistentClass { get; private set; }
 
         public readonly IList<Property> Properties = new List<Property>();
+        public readonly ISet<Property> AutoUpdateProperties = new HashSet<Property>();
 
         public static bool IsActsAsVersioned(PersistentClass pc)
         {
@@ -76,12 +77,20 @@ namespace NHibernate.ActsAsVersioned.Internal
             RefIdPropertyName = pc.MappedClass.Name + pc.IdentifierProperty.Name;
 
             var notMapped = new HashSet<string>();
+            var autoUpdate = new HashSet<string>();
             foreach (var property in pc.MappedClass.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var notVersionedAttribute = Attribute.GetCustomAttribute(property, typeof(NotVersionedAttribute));
                 if (notVersionedAttribute != null)
                 {
                     notMapped.Add(property.Name);
+                    continue;
+                }
+
+                var autoUpdateAttribute = Attribute.GetCustomAttribute(property, typeof(AutoUpdateAttribute));
+                if (autoUpdateAttribute != null)
+                {
+                    autoUpdate.Add(property.Name);
                 }
             }
 
@@ -99,6 +108,17 @@ namespace NHibernate.ActsAsVersioned.Internal
                 }
 
                 Properties.Add(property);
+
+                if (autoUpdate.Contains(property.Name))
+                {
+                    AutoUpdateProperties.Add(property);
+                }
+
+                if (property == property.PersistentClass.Version)
+                {
+                    // This is the version property, incremented with each insert/update
+                    AutoUpdateProperties.Add(property);
+                }
             }
         }
 

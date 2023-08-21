@@ -153,12 +153,16 @@ namespace NHibernate.ActsAsVersioned.Internal
             foreach (var property in VersionedClass.Properties)
             {
                 var newValue = GetValue(property, State);
-                var oldValue = GetValue(property, OldState);
 
-                if (!Tools.AreObjectsEqual(oldValue, newValue))
+                if (!VersionedClass.AutoUpdateProperties.Contains(property))
                 {
-                    // at least one property is different
-                    different = true;
+                    var oldValue = GetValue(property, OldState);
+
+                    if (!Tools.AreObjectsEqual(oldValue, newValue))
+                    {
+                        // at least one property that is not an auto-update property is different
+                        different = true;
+                    }
                 }
 
                 data.Add(property.Name, newValue);
@@ -166,8 +170,8 @@ namespace NHibernate.ActsAsVersioned.Internal
 
             if (!different)
             {
-                // the old state and the new state are not different, at least 
-                // if they are different it is in properties that are not versioned
+                // The old state and the new state do not have any properties that have changed that
+                // warrant adding a new row in the versioned table.
                 data = null;
             }
 

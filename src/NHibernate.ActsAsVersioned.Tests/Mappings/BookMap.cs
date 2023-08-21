@@ -1,6 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
 using NHibernate.ActsAsVersioned.Models;
-using NHibernate.Type;
 using CustomType = NHibernate.ActsAsVersioned.Models.CustomType;
 
 namespace NHibernate.ActsAsVersioned.Mappings
@@ -11,6 +10,7 @@ namespace NHibernate.ActsAsVersioned.Mappings
         {
             Table("books");
             Id(x => x.Id).Column("id");
+            Version(x => x.LockVersion);
             Map(x => x.Title)
                 .Column("title")
                 .Not.Nullable();
