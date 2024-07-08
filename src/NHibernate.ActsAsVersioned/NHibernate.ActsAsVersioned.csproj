@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NHibernate" Version="5.3.8" />
+    <PackageReference Include="NHibernate" Version="5.4.9" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" PrivateAssets="All" />
   </ItemGroup>
